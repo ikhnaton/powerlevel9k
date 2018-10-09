@@ -1036,7 +1036,7 @@ prompt_dir() {
     current_path=${current_path:s/~/$POWERLEVEL9K_HOME_FOLDER_ABBREVIATION}
   fi
 
-  "$1_prompt_segment" "$0_${current_state}" "$2" "blue" "$DEFAULT_COLOR" "${current_path}" "${dir_states[$current_state]}"
+  "$1_prompt_segment" "$0_${current_state}" "$2" "$POWERLEVEL9K_DIR_DEFAULT_BACKGROUND" "$DEFAULT_COLOR" "${current_path}" "${dir_states[$current_state]}"
 }
 
 ################################################################
@@ -1553,10 +1553,25 @@ powerlevel9k_vcs_init() {
   # The vcs segment can have three different states - defaults to 'clean'.
   typeset -gAH vcs_states
   vcs_states=(
-    'clean'         'green'
+    'clean'         'wheat1'
     'modified'      'yellow'
     'untracked'     'green'
   )
+
+  typeset -gAH vcs_states_foreground
+  vcs_states_foreground=(
+    'clean'         'magenta'
+    'modified'      'black'
+    'untracked'     'black'
+  )
+
+  if [[ "$POWERLEVEL9K_VCS_BACKGROUND_UNMODIFIED" != null ]]; then
+    vcs_states[clean]=$POWERLEVEL9K_VCS_BACKGROUND_UNMODIFIED
+  fi
+
+  if [[ "$POWERLEVEL9K_VCS_FOREGROUND_UNMODIFIED" != null ]]; then
+    vcs_states_foreground[clean]=$POWERLEVEL9K_VCS_FOREGROUND_UNMODIFIED
+  fi
 
   VCS_CHANGESET_PREFIX=''
   if [[ "$POWERLEVEL9K_SHOW_CHANGESET" == true ]]; then
@@ -1622,7 +1637,8 @@ prompt_vcs() {
         current_state='clean'
       fi
     fi
-    "$1_prompt_segment" "${0}_${(U)current_state}" "$2" "${vcs_states[$current_state]}" "$DEFAULT_COLOR" "$vcs_prompt" "$vcs_visual_identifier"
+    #"$1_prompt_segment" "${0}_${(U)current_state}" "$2" "${vcs_states[$current_state]}" "$DEFAULT_COLOR" "$vcs_prompt" "$vcs_visual_identifier"
+    "$1_prompt_segment" "${0}_${(U)current_state}" "$2" "${vcs_states[$current_state]}" "${vcs_states_foreground[$current_state]}" "$vcs_prompt" "$vcs_visual_identifier"
   fi
 }
 
